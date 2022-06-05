@@ -1,0 +1,90 @@
+# calcVersionNumber workflow
+
+name: calcVersionNumber
+
+
+on: 
+  workflow_call:
+    inputs:
+      runsOn:
+        description: "If the build runs on, values should be main, release, pr or branch"
+        type: string
+        default: "main"
+        required: true
+        
+      baseVersion:
+        description: 'Base version of the repository'
+        required: true
+        type: string
+        
+    outputs:
+      versionName:
+        description: "Calculated full version name"
+        value: ${{ jobs.setVersion.outputs.versionName }}
+
+jobs:
+ 
+  setVersion:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    outputs:
+      versionName: ${{ steps.calcVersionName.outputs.versionName }}
+      
+    steps:
+    
+    - name: on PR get PR number
+      if: ${{ inputs.runsOn == "PR" }}
+      uses: jwalton/gh-find-current-pr@v1.3.0
+      id: findPr
+      with:
+          # Can be "open", "closed", or "all".  Defaults to "open".
+          state: open
+    
+    - name: "Calculate full version name"
+      id: calcVersionName
+      shell: bash
+      run: |
+       # on Main branch
+       if [ "${{ inputs.runsOn }}" == "main" ] 
+       then    
+          echo "::set-output versionName=${{ inputs.baseVersion }}.${{github.run_number}}"
+          
+       # on release
+       elif [ "${{ inputs.runsOn }}" == "release" ]  
+       then 
+          echo "::set-output versionName=${{ inputs.baseVersion }}.${{github.run_number}}R"
+       fi
+       
+       #  on PR   
+       elif [ "${{ inputs.runsOn }}" == "PR" ]  
+       then 
+         # Fix branch name to 25, remove special chars and convert to lower case
+         fixedBranchName=`echo ${{github.head_ref}} | sed -e "s/\@/-/" | sed "s/#/-/" | tr '[:upper:]' '[:lower:]'`
+         if ${#fixedBranchName} > 25
+         then
+              fixedBranchName=${fixedBranchName:0:24}
+              // remove dash in the end
+              while "${fixedBranchName: -1}" == "-"
+              do
+                fixedBranchName=${fixedBranchName::-1}
+              done
+         fi
+         echo "::set-output versionName=${{ inputs.baseVersion }}-${fixedBranchName}-pr${{ steps.findPr.outputs.pr }}.${{github.run_number}}"
+       fi
+       # on other branch
+       else
+         fixedBranchName=`echo ${{github.ref_name}} | sed -e "s/\@/-/" | sed "s/#/-/" | tr '[:upper:]' '[:lower:]'`
+         if ${#fixedBranchName} > 35
+         then
+              fixedBranchName=${fixedBranchName:0:34}
+              // remove dash in the end
+              while "${fixedBranchName: -1}" == "-"
+              do
+                fixedBranchName=${fixedBranchName::-1}
+              done
+         fi
+         echo "::set-output versionName=$${{ inputs.baseVersion }}-${fixedBranchName}.${{github.run_number}}"
+       fi
+      
+
+    
