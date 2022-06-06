@@ -53,7 +53,6 @@ jobs:
        elif [ "${{ inputs.runsOn }}" == "release" ]  
        then 
           echo "::set-output versionName=${{ inputs.baseVersion }}.${{github.run_number}}R"
-       fi
        
        #  on PR   
        elif [ "${{ inputs.runsOn }}" == "pr" ]  
@@ -70,7 +69,7 @@ jobs:
               done
          fi
          echo "::set-output versionName=${{ inputs.baseVersion }}-${fixedBranchName}-pr${{ steps.findPr.outputs.pr }}.${{github.run_number}}"
-       fi
+
        # on other branch
        else
          fixedBranchName=`echo ${{github.ref_name}} | sed -e "s/\@/-/" | sed "s/#/-/" | tr '[:upper:]' '[:lower:]'`
