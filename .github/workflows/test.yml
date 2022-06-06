@@ -42,6 +42,7 @@ jobs:
         uses: Bhacaz/checkout-files@v1
         with:
           files: version.txt
+          token: ${{ secrets.BLINK_GITHUB_TOKEN }}
           
       - name: "Get base version"
         id: getBaseVer
