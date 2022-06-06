@@ -1,18 +1,50 @@
 name: Docker Image CI
 
-on: workflow_dispatch
-#   push:
-#     branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
+on: 
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
 
-  setup:
-    uses: blinkops/github-actions-shared/.github/workflows/calcVersionNumber.yml@main
-    with:
-        runsOn: "main"
-        baseVersion:  "2.0"
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: "Setup"
+        id: setup
+        shell: bash
+        run: |
+           # on Main branch
+           if [ "${{ github.event_name }}" == "push" ] 
+           then
+              echo "::set-output runOn=main"
+              echo "::set-output slackChannel=#jenkins-blink-ci-branch"
+           elif [ "${{ github.event_name }} == "pull_request" ]
+           then
+              echo "::set-output runOn=pr"
+              echo "::set-output slackChannel=#jenkins-blink-ci-branch"
+           elif [ "${{ github.head_ref }} == *"release"* ]
+           then
+              echo "::set-output runOn=release"
+              echo "::set-output slackChannel=#jenkins-blink-release"
+           else
+              echo "::set-output runOn=branch"
+              echo "::set-output slackChannel=#jenkins-blink-ci-branch"
+    
+      - name: "checkout"
+        uses: actions/checkout@v3
+        
+      - name: "calcVersion"
+        uses: blinkops/github-actions-shared/.github/workflows/calcVersionNumber.yml@main
+        with:
+            runsOn: ${{ steps.setup.outputs.runOn }}
+            baseVersion:  "2.0"
+            
+      - name: "echo"
+        run: echo ${{ jobs.calcVersion.outputs.versionName }}
+    
 
 #   build:
 
