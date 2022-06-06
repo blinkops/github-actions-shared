@@ -11,7 +11,7 @@ jobs:
   setup:
     uses: blinkops/github-actions-shared/.github/workflows/calcVersionNumber.yml@main
     with:
-        runsOn: "branch"
+        runsOn: "main"
         baseVersion:  "2.0"
 
 #   build:
