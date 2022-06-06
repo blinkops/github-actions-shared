@@ -36,6 +36,7 @@ jobs:
            else
               echo "::set-output runOn=branch"
               echo "::set-output slackChannel=#jenkins-blink-ci-branch"
+           fi
     
       - name: "Checkout version file"
         uses: Bhacaz/checkout-files@v1
