@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Test
 
 on: 
   push:
@@ -9,8 +9,12 @@ on:
 
 jobs:
 
-  build:
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      runOn: ${{ steps.setup.outputs.runOn }}
+      slackChannel: ${{ steps.setup.outputs.slackChannel }}
+      baseVersion: ${{ steps.getBaseVer.outputs.baseVersion }}
     steps: 
       - name: "Setup"
         id: setup
@@ -33,17 +37,28 @@ jobs:
               echo "::set-output runOn=branch"
               echo "::set-output slackChannel=#jenkins-blink-ci-branch"
     
-      - name: "checkout"
-        uses: actions/checkout@v3
-        
-      - name: "calcVersion"
-        uses: blinkops/github-actions-shared/.github/workflows/calcVersionNumber.yml@main
+      - name: "Checkout version file"
+        uses: Bhacaz/checkout-files@v1
         with:
-            runsOn: ${{ steps.setup.outputs.runOn }}
-            baseVersion:  "2.0"
-            
-      - name: "echo"
-        run: echo ${{ jobs.calcVersion.outputs.versionName }}
+          files: version.txt
+          
+      - name: "Get base version"
+        id: getBaseVer
+        shell: bash
+        run: |
+            baseVersion=`cat version.txt` 
+            echo "::set-output baseVersion=${baseVersion}"
+        
+  calculateVersionName:
+      uses: blinkops/github-actions-shared/.github/workflows/calcVersionNumber.yml@main
+      with:
+          runsOn: ${{ jobs.setup.outputs.runOn }}
+          baseVersion:  ${{ jobs.setup.outputs.baseVersion }}
+         
+  show:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ jobs.calculateVersionName.outputs.versionName }}
     
 
 #   build:
