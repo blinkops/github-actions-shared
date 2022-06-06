@@ -20,6 +20,7 @@ jobs:
         id: setup
         shell: bash
         run: |
+           set -e
            # on Main branch
            if [ "${{ github.event_name }}" == "push" ] 
            then
