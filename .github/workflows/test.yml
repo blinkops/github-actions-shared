@@ -38,11 +38,7 @@ jobs:
               echo "::set-output slackChannel=#jenkins-blink-ci-branch"
            fi
     
-      - name: "Checkout version file"
-        uses: Bhacaz/checkout-files@v1
-        with:
-          files: version.txt
-          token: ${{ github.token }}
+      - uses: actions/checkout@v3
           
       - name: "Get base version"
         id: getBaseVer
