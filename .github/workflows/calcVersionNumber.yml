@@ -33,7 +33,7 @@ jobs:
     steps:
     
     - name: on PR get PR number
-      if: ${{ inputs.runsOn == "PR" }}
+      if: ${{ inputs.runsOn == "pr" }}
       uses: jwalton/gh-find-current-pr@v1.3.0
       id: findPr
       with:
@@ -56,7 +56,7 @@ jobs:
        fi
        
        #  on PR   
-       elif [ "${{ inputs.runsOn }}" == "PR" ]  
+       elif [ "${{ inputs.runsOn }}" == "pr" ]  
        then 
          # Fix branch name to 25, remove special chars and convert to lower case
          fixedBranchName=`echo ${{github.head_ref}} | sed -e "s/\@/-/" | sed "s/#/-/" | tr '[:upper:]' '[:lower:]'`
