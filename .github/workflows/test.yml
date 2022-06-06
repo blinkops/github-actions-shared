@@ -51,12 +51,14 @@ jobs:
         
   calculateVersionName:
       uses: blinkops/github-actions-shared/.github/workflows/calcVersionNumber.yml@main
+      needs: setup
       with:
           runsOn: ${{ jobs.setup.outputs.runOn }}
           baseVersion:  ${{ jobs.setup.outputs.baseVersion }}
          
   show:
     runs-on: ubuntu-latest
+    needs: calculateVersionName
     steps:
       - run: echo ${{ jobs.calculateVersionName.outputs.versionName }}
     
