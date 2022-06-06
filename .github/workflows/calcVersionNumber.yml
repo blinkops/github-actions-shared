@@ -33,7 +33,7 @@ jobs:
     steps:
     
     - name: on PR get PR number
-      if: ${{ inputs.runsOn == "pr" }}
+      if: ${{ inputs.runsOn }} == "pr" 
       uses: jwalton/gh-find-current-pr@v1.3.0
       id: findPr
       with:
