@@ -44,19 +44,23 @@ jobs:
       id: calcVersionName
       shell: bash
       run: |
+       set -e
        # on Main branch
        if [ "${{ inputs.runsOn }}" == "main" ] 
        then    
+          echo "main"
           echo "::set-output versionName=${{ inputs.baseVersion }}.${{github.run_number}}"
           
        # on release
        elif [ "${{ inputs.runsOn }}" == "release" ]  
        then 
+          echo "release"
           echo "::set-output versionName=${{ inputs.baseVersion }}.${{github.run_number}}R"
        
        #  on PR   
        elif [ "${{ inputs.runsOn }}" == "pr" ]  
        then 
+         echo "PR"
          # Fix branch name to 25, remove special chars and convert to lower case
          fixedBranchName=`echo ${{github.head_ref}} | sed -e "s/\@/-/" | sed "s/#/-/" | tr '[:upper:]' '[:lower:]'`
          if ${#fixedBranchName} > 25
@@ -72,6 +76,7 @@ jobs:
 
        # on other branch
        else
+         echo "branch"
          fixedBranchName=`echo ${{github.ref_name}} | sed -e "s/\@/-/" | sed "s/#/-/" | tr '[:upper:]' '[:lower:]'`
          if ${#fixedBranchName} > 35
          then
