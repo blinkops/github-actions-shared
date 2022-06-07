@@ -20,7 +20,6 @@ jobs:
         id: setup
         shell: bash
         run: |
-           set -e
            # on Main branch
            if [ "${{ github.event_name }}" == "push" ] 
            then
@@ -30,7 +29,7 @@ jobs:
            then
               echo "::set-output name=runOn::pr"
               echo "::set-output name=slackChannel::#jenkins-blink-ci-branch"
-           elif [ "${{ github.head_ref }} == *"release"* ]
+           elif [ "${{ github.head_ref }}" == *"release"* ]
            then
               echo "::set-output name=runOn::release"
               echo "::set-output name=slackChannel::#jenkins-blink-release"
