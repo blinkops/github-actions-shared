@@ -65,10 +65,10 @@ jobs:
          
   show:
     runs-on: ubuntu-20.04
-    needs: calculateVersionName
+    needs: [setup, calculateVersionName]
     steps:
       - run: |
-          echo "Running for ${{ jobs.setup.outputs.runOn }}: "
+          echo "Running for ${{ needs.setup.outputs.runOn }}: "
           echo ${{ needs.calculateVersionName.outputs.versionName }}
           
     
