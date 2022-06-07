@@ -77,10 +77,11 @@ jobs:
        else
          echo "branch"
          fixedBranchName=$(echo ${{github.ref_name}} | sed -e "s/\@/-/" | sed "s/#/-/" | sed "s/\\\/-/" | sed "s/\//-/" | tr '[:upper:]' '[:lower:]')
-         echo "name length is ${#fixedBranchName}"
          if ${#fixedBranchName} > 35
          then
+              echo "name length is ${#fixedBranchName}"
               fixedBranchName=${fixedBranchName:0:34}
+              echo "fixedBranchName is ${fixedBranchName}"
               // remove dash in the end
               while "${fixedBranchName: -1}" == "-"
               do
