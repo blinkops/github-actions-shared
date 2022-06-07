@@ -61,7 +61,7 @@ jobs:
        then 
          echo "PR"
          # Fix branch name to 25, remove special chars and convert to lower case
-         fixedBranchName=$(echo ${{github.head_ref}} | sed -e "s/\@/-/" | sed "s/#/-/" | tr '[:upper:]' '[:lower:]')
+         fixedBranchName=$(echo ${{github.head_ref}} | sed -e "s/\@/-/" | sed "s/#/-/" | sed "s/\\\/-/" | sed "s/\//-/" | tr '[:upper:]' '[:lower:]')
          if ${#fixedBranchName} > 25
          then
               fixedBranchName=${fixedBranchName:0:24}
