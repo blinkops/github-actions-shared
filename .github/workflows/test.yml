@@ -67,7 +67,10 @@ jobs:
     runs-on: ubuntu-20.04
     needs: calculateVersionName
     steps:
-      - run: echo ${{ needs.calculateVersionName.outputs.versionName }}
+      - run: |
+          echo "Running for ${{ jobs.setup.outputs.runOn }}: "
+          echo ${{ needs.calculateVersionName.outputs.versionName }}
+          
     
 
 #   build:
