@@ -1,18 +1,77 @@
-name: Docker Image CI
+name: Test
 
-on: workflow_dispatch
-#   push:
-#     branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
+on: 
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
 
   setup:
-    uses: blinkops/github-actions-shared/.github/workflows/calcVersionNumber.yml@main
-    with:
-        runsOn: "main"
-        baseVersion:  "2.0"
+    runs-on: ubuntu-20.04
+    outputs:
+      runOn: ${{ steps.setup.outputs.runOn }}
+      slackChannel: ${{ steps.setup.outputs.slackChannel }}
+      baseVersion: ${{ steps.getBaseVer.outputs.baseVersion }}
+    steps: 
+      - name: "Setup"
+        id: setup
+        shell: bash
+        run: |
+           # on Main branch
+           if [ "${{ github.event_name }}" == "push" ] 
+           then
+              echo "::set-output name=runOn::main"
+              echo "::set-output name=slackChannel::#jenkins-blink-ci-branch"
+           elif [ "${{ github.event_name }}" == "pull_request" ]
+           then
+              echo "::set-output name=runOn::pr"
+              echo "::set-output name=slackChannel::#jenkins-blink-ci-branch"
+           elif [ "${{ github.head_ref }}" == *"release"* ]
+           then
+              echo "::set-output name=runOn::release"
+              echo "::set-output name=slackChannel::#jenkins-blink-release"
+           else
+              echo "::set-output name=runOn::branch"
+              echo "::set-output name=slackChannel::#jenkins-blink-ci-branch"
+           fi
+    
+      - uses: actions/checkout@v3
+          
+      - name: "Get base version"
+        id: getBaseVer
+        shell: bash
+        run: |
+            baseVersion=`cat version.txt` 
+            echo "::set-output name=baseVersion::${baseVersion}"
+            
+  debug: 
+    runs-on: ubuntu-20.04
+    needs: setup
+    steps:
+      - run: |
+          echo " runOn is ${{ needs.setup.outputs.runOn }}"
+          echo " baseVersion is ${{ needs.setup.outputs.baseVersion }}"
+          echo " slackChannel is ${{ needs.setup.outputs.slackChannel }}"
+        
+  calculateVersionName:
+      uses: blinkops/github-actions-shared/.github/workflows/calcVersionNumber.yml@main
+      needs: setup
+      with:
+          runsOn: ${{ needs.setup.outputs.runOn }}
+          baseVersion:  ${{ needs.setup.outputs.baseVersion }}
+         
+  show:
+    runs-on: ubuntu-20.04
+    needs: [setup, calculateVersionName]
+    steps:
+      - run: |
+          echo "Running for ${{ needs.setup.outputs.runOn }}: "
+          echo ${{ needs.calculateVersionName.outputs.versionName }}
+          
+    
 
 #   build:
 
