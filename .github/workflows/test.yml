@@ -24,19 +24,19 @@ jobs:
            # on Main branch
            if [ "${{ github.event_name }}" == "push" ] 
            then
-              echo "::set-output runOn=main"
-              echo "::set-output slackChannel=#jenkins-blink-ci-branch"
+              echo "::set-output name=runOn::main"
+              echo "::set-output name=slackChannel::#jenkins-blink-ci-branch"
            elif [ "${{ github.event_name }} == "pull_request" ]
            then
-              echo "::set-output runOn=pr"
-              echo "::set-output slackChannel=#jenkins-blink-ci-branch"
+              echo "::set-output name=runOn::pr"
+              echo "::set-output name=slackChannel::#jenkins-blink-ci-branch"
            elif [ "${{ github.head_ref }} == *"release"* ]
            then
-              echo "::set-output runOn=release"
-              echo "::set-output slackChannel=#jenkins-blink-release"
+              echo "::set-output name=runOn::release"
+              echo "::set-output name=slackChannel::#jenkins-blink-release"
            else
-              echo "::set-output runOn=branch"
-              echo "::set-output slackChannel=#jenkins-blink-ci-branch"
+              echo "::set-output name=runOn::branch"
+              echo "::set-output name=slackChannel::#jenkins-blink-ci-branch"
            fi
     
       - uses: actions/checkout@v3
@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
             baseVersion=`cat version.txt` 
-            echo "::set-output baseVersion=${baseVersion}"
+            echo "::set-output name=baseVersion::${baseVersion}"
             
   debug: 
     runs-on: ubuntu-latest
