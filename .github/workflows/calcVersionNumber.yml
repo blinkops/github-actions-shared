@@ -26,14 +26,14 @@ jobs:
  
   setVersion:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     outputs:
       versionName: ${{ steps.calcVersionName.outputs.versionName }}
       
     steps:
     
     - name: on PR get PR number
-      if: ${{ inputs.runsOn }} == "pr" 
+      if: ${{ inputs.runsOn == "pr" }}
       uses: jwalton/gh-find-current-pr@v1.3.0
       id: findPr
       with:
