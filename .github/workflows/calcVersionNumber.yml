@@ -65,8 +65,8 @@ jobs:
          if ${#fixedBranchName} > 25
          then
               fixedBranchName=${fixedBranchName:0:24}
-              // remove dash in the end
-              while "${fixedBranchName: -1}" == "-"
+              # remove dash in the end of the string
+              while [ "${fixedBranchName: -1}" == "-" ]
               do
                 fixedBranchName=${fixedBranchName::-1}
               done
@@ -82,8 +82,8 @@ jobs:
               echo "name length is ${#fixedBranchName}"
               fixedBranchName=${fixedBranchName:0:34}
               echo "fixedBranchName is ${fixedBranchName}"
-              // remove dash in the end
-              while "${fixedBranchName: -1}" == "-"
+              # remove dash in the end of the string
+              while [ "${fixedBranchName: -1}" == "-" ]
               do
                 fixedBranchName=${fixedBranchName::-1}
               done
