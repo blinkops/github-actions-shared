@@ -76,7 +76,8 @@ jobs:
        # on other branch
        else
          echo "branch"
-         fixedBranchName=$(echo ${{github.ref_name}} | sed -e "s/\@/-/" | sed "s/#/-/" | tr '[:upper:]' '[:lower:]')
+         fixedBranchName=$(echo ${{github.ref_name}} | sed -e "s/\@/-/" | sed "s/#/-/" | sed "s/\\\/-/" | sed "s/\//-/" | tr '[:upper:]' '[:lower:]')
+         echo "name length is ${#fixedBranchName}"
          if ${#fixedBranchName} > 35
          then
               fixedBranchName=${fixedBranchName:0:34}
