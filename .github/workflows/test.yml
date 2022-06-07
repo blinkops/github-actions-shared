@@ -47,6 +47,15 @@ jobs:
         run: |
             baseVersion=`cat version.txt` 
             echo "::set-output baseVersion=${baseVersion}"
+            
+  debug: 
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - run: |
+          echo " runOn is ${{ needs.setup.outputs.runOn }}"
+          echo " baseVersion is ${{ needs.setup.outputs.baseVersion }}"
+          echo " slackChannel is ${{ needs.setup.outputs.slackChannel }}"
         
   calculateVersionName:
       uses: blinkops/github-actions-shared/.github/workflows/calcVersionNumber.yml@main
