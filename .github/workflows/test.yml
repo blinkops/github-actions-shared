@@ -10,7 +10,7 @@ on:
 jobs:
 
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     outputs:
       runOn: ${{ steps.setup.outputs.runOn }}
       slackChannel: ${{ steps.setup.outputs.slackChannel }}
@@ -48,7 +48,7 @@ jobs:
             echo "::set-output name=baseVersion::${baseVersion}"
             
   debug: 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: setup
     steps:
       - run: |
@@ -64,7 +64,7 @@ jobs:
           baseVersion:  ${{ needs.setup.outputs.baseVersion }}
          
   show:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: calculateVersionName
     steps:
       - run: echo ${{ needs.calculateVersionName.outputs.versionName }}
